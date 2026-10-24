@@ -1,0 +1,69 @@
+<!doctype html>
+<html class="light" lang="zh-CN">
+<meta charset="utf-8">
+<title>Turn Navigator — local fixture, not ChatGPT</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.65 system-ui, sans-serif; background: #fafafa; color: #18181b; }
+aside { position: fixed; width: 248px; inset: 0 auto 0 0; background: #f0f0f0; padding: 28px 22px; border-right: 1px solid #ddd; }
+aside strong { font-size: 20px; }
+aside p { color: #71717a; font-size: 13px; }
+main { position: fixed; inset: 0 0 0 248px; display: flex; flex-direction: column; }
+header { height: 64px; flex: none; background: #fafafa; padding: 18px 36px; border-bottom: 1px solid #e4e4e7; }
+.conversation { overflow-y: auto; flex: 1; padding: 0 76px; scroll-behavior: auto; }
+.messages { max-width: 760px; margin: auto; padding-bottom: 320px; }
+article { padding: 24px 0; }
+[data-message-author-role="user"] { background: #ededf0; border-radius: 16px; padding: 12px 18px; margin-left: 80px; }
+[data-message-author-role="assistant"] { padding: 14px 0 0; }
+form { flex: none; height: 120px; padding: 18px 76px; }
+#prompt-textarea { max-width: 760px; margin: auto; min-height: 64px; padding: 16px; border: 1px solid #d4d4d8; border-radius: 20px; background: #fff; }
+.dark body { background: #171717; color: #fafafa; }
+.dark aside { background: #202020; border-color: #333; }
+.dark header { background: #171717; border-color: #333; }
+.dark [data-message-author-role="user"] { background: #303030; }
+.dark #prompt-textarea { background: #27272a; border-color: #444; }
+</style>
+<aside><strong>轮次导航</strong><p>本地模拟页面 · 非真实 ChatGPT 截图</p><hr><p>用于验证几何、预览、滚动与键盘操作。<br>不连接账户，不发送网络请求。</p></aside>
+<main>
+  <header>ChatGPT 网页适配 · 本地交互测试</header>
+  <div class="conversation" data-conversation-scroll><div class="messages"></div></div>
+  <form><div id="prompt-textarea" contenteditable="true">发送消息…</div></form>
+</main>
+<script>
+window.fixture = {
+  render(count, start = 1) {
+    const holder = document.querySelector('.messages');
+    holder.replaceChildren();
+    const questions = ['如何在长对话中快速找到之前的问题？', '导航轨道为什么使用固定间距？', '怎样判断当前正在阅读的轮次？', '历史记录尚未加载时如何处理？', '可以通过键盘操作导航栏吗？'];
+    const answers = [
+      '在右侧显示每轮对话的标记。悬停可以预览提问与回答，点击即可回到对应位置。目录只读取页面已经显示的消息。',
+      '相邻标记中心固定相距 10px。轨道高度超过 420px 时内部滚动，顶部和底部会根据滚动位置显示渐隐。',
+      '根据消息相对聊天可视区域的位置切换当前轮。点击导航后暂时锁定高亮，避免滚动事件导致来回跳动。',
+      '从未显示过的历史不会凭空生成标记。曾经读取过的消息可以保留在会话内存中，切换对话后会清空。',
+      '使用 Tab 逐个聚焦标记，Enter 或空格跳转；上下方向键和 Home、End 可在轨道内移动焦点。'
+    ];
+    for (let index = 0; index < count; index++) {
+      const n = start + index;
+      const user = document.createElement('article');
+      user.dataset.testid = 'conversation-turn-' + (n * 2 - 1);
+      const prompt = document.createElement('div');
+      prompt.dataset.messageAuthorRole = 'user'; prompt.dataset.messageId = 'user-' + n;
+      prompt.textContent = n + '. ' + questions[index % questions.length];
+      user.append(prompt);
+      const assistant = document.createElement('article');
+      assistant.dataset.testid = 'conversation-turn-' + n * 2;
+      const response = document.createElement('div');
+      response.dataset.messageAuthorRole = 'assistant'; response.dataset.messageId = 'assistant-' + n;
+      response.textContent = answers[index % answers.length] + ' '.repeat(1) + '这一段额外内容用来模拟实际对话的高度，让测试能够验证不同滚动位置的跳转和高亮。'.repeat(3);
+      assistant.append(response); holder.append(user, assistant);
+    }
+    document.querySelector('.conversation').scrollTop = 0;
+  },
+  busy(on) {
+    document.querySelector('[data-testid="stop-button"]')?.remove();
+    if (on) { const b = document.createElement('button'); b.dataset.testid = 'stop-button'; b.textContent = '停止生成'; document.querySelector('form').append(b); }
+  }
+};
+fixture.render(5);
+</script>
+</html>

@@ -1,0 +1,54 @@
+:host {
+  all: initial;
+  display: block;
+  position: sticky;
+  top: 0;
+  height: 0;
+  z-index: 7;
+  pointer-events: none;
+  --border-l4: #d4d4d8;
+  --label-tertiary: #71717a;
+  --label-primary: #18181b;
+  --bg-layer-1: #ffffff;
+  --business-primary: #2563eb;
+  --elevation-panel: 0 6px 24px rgba(0,0,0,.12);
+  color-scheme: light;
+}
+:host([hidden]) { display: none !important; }
+:host([data-theme="dark"]) {
+  --border-l4: #3f3f46;
+  --label-tertiary: #a1a1aa;
+  --label-primary: #fafafa;
+  --bg-layer-1: #27272a;
+  --business-primary: #60a5fa;
+  --elevation-panel: 0 6px 24px rgba(0,0,0,.5);
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+.overlay { position: fixed; height: 0; pointer-events: none; font-family: system-ui, sans-serif; direction: ltr; }
+.frame { position: absolute; width: 28px; right: 16px; top: calc(var(--band) / 2); transform: translateY(-50%); pointer-events: auto; cursor: pointer; transition: height .22s cubic-bezier(.2,.8,.2,1); }
+.scroller { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: none; }
+.scroller::-webkit-scrollbar { display: none; }
+.scroller[data-fade="up"] { mask-image: linear-gradient(to bottom, transparent, #000 24px); }
+.scroller[data-fade="down"] { mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent); }
+.scroller[data-fade="both"] { mask-image: linear-gradient(to bottom, transparent, #000 24px, #000 calc(100% - 24px), transparent); }
+.content { position: relative; width: 28px; }
+.mark { position: absolute; left: 0; right: 0; width: 28px; height: 10px; transform: translateY(-50%); padding: 0; margin: 0; border: 0; background: none; cursor: pointer; color: inherit; appearance: none; outline: none; }
+.markNew { animation: enter .15s ease-out; }
+.mark::before { content: ""; position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 12px; height: 2px; border-radius: 2px; background: var(--border-l4); transition: width .14s, background-color .14s; }
+.markPreview::before { width: 18px; background: var(--label-tertiary); }
+.markActive::before, .markBusy::before { width: 20px; background: var(--label-primary); }
+.markUnloaded::before { width: 8px; opacity: .6; }
+.markBusy::before { animation: busy 1s ease-in-out infinite; }
+.mark:focus-visible::before { width: 20px; background: var(--business-primary); outline: 1px solid var(--business-primary); outline-offset: 2px; }
+.preview { position: absolute; right: calc(100% + 10px); width: min(300px, max(80px, calc(var(--container-width) - 120px))); max-height: 100px; padding: 10px 12px; border-radius: 10px; overflow: hidden; background: var(--bg-layer-1); color: var(--label-primary); box-shadow: var(--elevation-panel); pointer-events: none; transition: top .14s ease; animation: appear .12s ease-out; text-align: start; overflow-wrap: anywhere; }
+.previewPrompt, .previewResponse { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; }
+.previewPrompt { font-size: 13px; line-height: 18px; font-weight: 700; -webkit-line-clamp: 1; }
+.previewResponse { font-size: 12px; line-height: 16px; color: var(--label-tertiary); margin-top: 4px; -webkit-line-clamp: 3; }
+@keyframes busy { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+@keyframes enter { from { opacity: 0; } to { opacity: 1; } }
+@keyframes appear { from { opacity: 0; transform: translateX(4px); } to { opacity: 1; transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

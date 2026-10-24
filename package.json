@@ -1,0 +1,19 @@
+{
+  "name": "chatgpt-turn-navigator",
+  "version": "0.1.1",
+  "description": "ChatGPT 网页版轮次导航用户脚本：悬停预览、点击跳转与阅读位置高亮。",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/white-thirteen/chatgpt-turn-navigator.git"
+  },
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/geometry.test.js tests/order.test.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
